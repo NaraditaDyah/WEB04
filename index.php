@@ -1,3 +1,49 @@
+<?php
+require_once 'koneksi.php';
+
+if (isset($_GET['action']) && $_GET['action'] == 'get_sales') {
+  header('Content-Type: application/json');
+
+  $query = "SELECT tahun, SUM(total_penjualan) AS total_penjualan 
+               FROM penjualan_tahunan 
+               WHERE tahun BETWEEN 2017 AND 2026 
+               GROUP BY tahun 
+               ORDER BY tahun ASC";
+
+  $result = mysqli_query($koneksi, $query);
+
+  $data = array();
+  if ($result) {
+    foreach ($result as $row) {
+      $data[] = array(
+        "tahun" => (int) $row['tahun'],
+        "total_penjualan" => (int) $row['total_penjualan']
+      );
+    }
+  }
+  echo json_encode($data);
+  mysqli_close($koneksi);
+  exit; 
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+  $nama = mysqli_real_escape_string($koneksi, $_POST['nama']);
+  $email = mysqli_real_escape_string($koneksi, $_POST['email']);
+  $pesan = mysqli_real_escape_string($koneksi, $_POST['pesan']);
+
+  $query = "INSERT INTO pesan (nama, email, pesan) VALUES ('$nama', '$email', '$pesan')";
+
+  if (mysqli_query($koneksi, $query)) {
+    echo "success";
+  } else {
+    echo "error: " . mysqli_error($koneksi);
+  }
+  mysqli_close($koneksi);
+  exit; 
+}
+
+?>
+
 <!DOCTYPE html>
 <html>
 
@@ -267,9 +313,9 @@
 
       <div class="d-flex gap-3 justify-content-center mt-3">
         <a href="https://maps.app.goo.gl/JH71rN7w7wSKZmtR7" target="_blank" class="btn-lokasi"
-        style="color: rgb(255, 255, 255)">Kunjungi Lokasi Kami</a>
-      <a href="https://wa.me/6281804156857?text=Halo%20Lanmak%20Studio,%20saya%20ingin%20konsultasi%20mengenai%20pembuatan%20patung." target="_blank" class="btn-lokasi"
-        style="color: rgb(255, 255, 255)">Konsultasi Patung</a>
+          style="color: rgb(255, 255, 255)">Kunjungi Lokasi Kami</a>
+        <a href="https://wa.me/6281804156857?text=Halo%20Lanmak%20Studio,%20saya%20ingin%20konsultasi%20mengenai%20pembuatan%20patung."
+          target="_blank" class="btn-lokasi" style="color: rgb(255, 255, 255)">Konsultasi Patung</a>
       </div>
 
     </div>
@@ -287,7 +333,7 @@
             ✓ Terimakasih Atas Pesan Yang Anda Kirim
           </div>
 
-          <form id="form-saran" action="simpan_pesan.php" method="POST" class="p-4 bg-white rounded shadow-sm">
+          <form id="form-saran" action="index.php" method="POST" class="p-4 bg-white rounded shadow-sm">
             <div class="mb-3 text-start">
               <label for="nama" class="form-label fw-semibold text-secondary">Nama</label>
               <input type="text" class="form-control" id="nama" name="nama" placeholder="Masukkan nama Anda" required>
@@ -356,7 +402,7 @@
       });
     });
 
-    fetch('data_penjualan.php')
+    fetch('index.php?action=get_sales')
       .then(response => response.json())
       .then(data => {
         // Memisahkan data dari database ke array khusus Label dan Angka
@@ -399,8 +445,7 @@
       const formData = new FormData(form);
       const notif = document.getElementById('notif-sukses');
 
-      // Mengirim data ke simpan_saran.php di latar belakang
-      fetch('simpan_pesan.php', {
+      fetch('index.php', {
         method: 'POST',
         body: formData
       })

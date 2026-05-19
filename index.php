@@ -116,7 +116,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   </div>
 
   <div class="tentang-kami" id="tentang-kamiid">
-    <a href="#homeid" target="_blank" style="color: rgb(94, 93, 93)">Tentang Kami</a>
     <div class="container text-center; text-light">
       <div class="row">
         <div class="col-md-5">
@@ -382,9 +381,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   <footer>
     <div>
-      Copyright © 2026 Pengrajin patung, Jasa Pembuatan Patung Lanmak Studio
+      Copyright © 2026 Pengrajin Patung, Jasa Pembuatan Patung Lanmak Studio
       |<br />
-      Powered by Pengrajin Patung Jogja
+      Powered by Patung Jogja
     </div>
   </footer>
 
